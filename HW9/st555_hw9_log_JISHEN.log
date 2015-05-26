@@ -1,0 +1,305 @@
+90
+91   /***Your Name Ji Shen
+92       Date 3/18/2015
+93       ST 555
+94       Homework number 9
+95       Goal:
+96       To apply concepts from the chapters 7 9 like using loop and data rotation.
+97       ***/
+98   libname hw9 "D:\google drive\NC semester 6\st555\HW9";
+NOTE: Libref HW9 was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: D:\google drive\NC semester 6\st555\HW9
+98 !                                                         *create hw9 libarary;
+99   libname Orion "D:\google drive\NC semester 6\st555\prog2";
+NOTE: Libref ORION was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: D:\google drive\NC semester 6\st555\prog2
+99 !                                                             *create orion libarary;
+100  %let path=D:\google drive\NC semester 6\st555\HW9;
+101
+102  ods pdf file='st555_hw6_result_JISHEN.pdf';
+NOTE: Writing ODS PDF output to DISK destination
+      "D:\google drive\NC semester 6\st555\Data\st555_hw6_result_JISHEN.pdf", printer "PDF".
+103
+104
+105
+106
+107  /*Quetion 1*/
+108  /*There are 21 patients included in the 'completers'dataset*/
+109  data hw9.completers;
+110  set hw9.lapband;
+111  if cmiss(of _all_) then delete;
+112  run;
+
+NOTE: There were 39 observations read from the data set HW9.LAPBAND.
+NOTE: The data set HW9.COMPLETERS has 21 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+113
+114  /*Quetion 2*/
+115  data hw9.noneg9;
+116  set hw9.completers;
+117  array Records{*} WgtLBS:;
+118  do i=1 to dim(Records);
+119  if Records{i}=-9 then Records{i}=.;
+120  end;
+121  run;
+
+NOTE: There were 21 observations read from the data set HW9.COMPLETERS.
+NOTE: The data set HW9.NONEG9 has 21 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+122
+123  /*Quetion 3*/
+124
+125  /*Part a Convert the weight measurements to kg*/
+126  data hw9.noneg9_kg;
+127  set hw9.noneg9;
+128  drop i WgtLBS:;
+129  array Records{*} WgtLBS:;
+130  array Rc{*} WgtKG0 WgtKG2 WgtKG4 WgtKG6 WgtKG12 WgtKG18 WgtKG24;
+131  do i=1 to dim(Rc);
+132  Rc{i}=0.4536*Records{i};
+133  end;
+134  run;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      6 at 132:13
+NOTE: There were 21 observations read from the data set HW9.NONEG9.
+NOTE: The data set HW9.NONEG9_KG has 21 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+
+
+135
+136
+137  /*Convert wide data to narrow one*/
+138  data hw9.noneg9_v(keep=id Month WgtKG WgtLBS);
+139  set hw9.noneg9;
+140  array Records{*} WgtLBS:;
+141  do i=1 to dim(Records);
+142  Month = 2*i;
+143  WgtLBS=Records{i};
+144  WgtKG=0.4536*Records{i};
+145  output;
+146  end;
+147  run;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      6 at 144:13
+NOTE: There were 21 observations read from the data set HW9.NONEG9.
+NOTE: The data set HW9.NONEG9_V has 147 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.03 seconds
+
+
+148
+149  /*Sort the data*/
+150  proc sort data=hw9.noneg9_v;
+151  by Month;
+152  run;
+
+NOTE: There were 147 observations read from the data set HW9.NONEG9_V.
+NOTE: The data set HW9.NONEG9_V has 147 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+
+
+153
+154  /*Summarize the data for both KG and LBS*/
+155  proc means data = hw9.noneg9_v  mean stddev min median max ;
+156  var WgtLBS WgtKG;
+157  by Month;
+158  run;
+
+NOTE: Writing HTML Body file: sashtml1.htm
+NOTE: There were 147 observations read from the data set HW9.NONEG9_V.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.63 seconds
+      cpu time            0.32 seconds
+
+
+159
+160  /*Quetion 4*/
+161
+162  /*Part a */
+163  /*Calculate the percentage change*/
+164  data hw9.noneg9_pct(drop=i );
+165  set hw9.noneg9;
+166  array Records{*} WgtLBS:;
+167  array Pctwl{*} Pctwl2 Pctwl4 Pctwl6 Pctwl12 Pctwl18 Pctwl24;
+168  do i=1 to dim(Pctwl);
+169  Pctwl{i}=((Records{i+1}-Records{1})/Records{1})*100;
+170  end;
+171  run;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      6 at 169:24   6 at 169:36   6 at 169:48
+NOTE: There were 21 observations read from the data set HW9.NONEG9.
+NOTE: The data set HW9.NONEG9_PCT has 21 observations and 14 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.03 seconds
+
+
+172
+173  /*Part b*/
+174  /*Convert wide dataset to narrow dataset*/
+175  data hw9.noneg9_pctv(keep=id Month Pctwloss);
+176  set hw9.noneg9_pct;
+177  array Pctwl{*} Pctwl:;
+178  do i=1 to dim(Pctwl);
+179  if Pctwl{i} ne .  then do;
+180  Month = 2*i;
+181  Pctwloss=Pctwl{i};
+182  output;
+183  end;
+184  end;
+185  run;
+
+NOTE: There were 21 observations read from the data set HW9.NONEG9_PCT.
+NOTE: The data set HW9.NONEG9_PCTV has 120 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+
+
+186  /*Sort the data*/
+187  proc sort data=hw9.noneg9_pctv;
+188  by Month;
+189  run;
+
+NOTE: There were 120 observations read from the data set HW9.NONEG9_PCTV.
+NOTE: The data set HW9.NONEG9_PCTV has 120 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+190  /*Summarize data of weight change percentage of different time point*/
+191  proc means data = hw9.noneg9_pctv mean stddev min median max;
+192  var Pctwloss;
+193  by Month;
+194  run;
+
+NOTE: There were 120 observations read from the data set HW9.NONEG9_PCTV.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.01 seconds
+
+
+195
+196  /*Quetion 5*/
+197  /*calculate the difference between result and goal*/
+198  data hw9.compare(drop=i);
+199     set hw9.noneg9_pct;
+200     array Pctwl{*} Pctwl:;
+201     array Diff{6};
+202     array Goal{6} _temporary_ (-10,-14,-18,-20,-22,-27); * set the goal using look up table;
+203     do i=1 to 6;
+204        Diff{i}=Pctwl{i}-Goal{i};
+205     end;
+206  run;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      6 at 204:23
+NOTE: There were 21 observations read from the data set HW9.NONEG9_PCT.
+NOTE: The data set HW9.COMPARE has 21 observations and 20 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.04 seconds
+
+
+207
+208  /*Transpose the data*/
+209  data hw9.compare_v(keep=id Month Difference);
+210  set hw9.compare;
+211  array Diff{*} Diff:;
+212  do i=1 to dim(Diff);
+213  if Diff{i} ne .  then do;
+214  Month = 2*i;
+215  Difference=Diff{i};
+216  output;
+217  end;
+218  end;
+219  run;
+
+NOTE: There were 21 observations read from the data set HW9.COMPARE.
+NOTE: The data set HW9.COMPARE_V has 120 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.04 seconds
+
+
+220  /*sort the data by month*/
+221  proc sort data=hw9.compare_v;
+222  by Month;
+223  run;
+
+NOTE: There were 120 observations read from the data set HW9.COMPARE_V.
+NOTE: The data set HW9.COMPARE_V has 120 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+224
+225  /*Part a :Provide summary statistics for these 6 difference variables.*/
+226  proc means data = hw9.compare_v mean stddev min median max;
+227  var Difference;
+228  by Month;
+229  run;
+
+NOTE: There were 120 observations read from the data set HW9.COMPARE_V.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.22 seconds
+      cpu time            0.04 seconds
+
+
+230  /*Part b :Provide output that provides the number of patients for each category .*/
+231  data hw9.compare_met;
+232  set hw9.compare_v;
+233  if Difference<=0 then Diffmet = Difference;  * set the diffmet if the patients meet the goal;
+234  run;
+
+NOTE: There were 120 observations read from the data set HW9.COMPARE_V.
+NOTE: The data set HW9.COMPARE_MET has 120 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.03 seconds
+
+
+235
+236  /*Count the number of patient for each month*/
+237  proc means data = hw9.compare_met N ;
+238  var Difference Diffmet;
+239  by Month;
+240  run;
+
+NOTE: There were 120 observations read from the data set HW9.COMPARE_MET.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.04 seconds
+
+
+241
+242
+243
+244
+245  ods pdf close;
+NOTE: ODS PDF printed 4 pages to D:\google drive\NC semester
+      6\st555\Data\st555_hw6_result_JISHEN.pdf.

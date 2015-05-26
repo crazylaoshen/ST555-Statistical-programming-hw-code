@@ -1,0 +1,331 @@
+175
+176  /***Your Name Ji Shen
+177      Date 1/27/2015
+178      ST 555
+179      Homework number 6
+180      Goal:
+181      To apply concepts from the chapters such as concatenate and merge data
+182      ***/
+183  libname hw6 "D:\google drive\NC semester 6\st555\HW6";
+NOTE: Libref HW6 was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: D:\google drive\NC semester 6\st555\HW6
+183!                                                         *create hw5 libarary;
+184  libname Orion "D:\google drive\NC semester 6\st555\data";
+NOTE: Libref ORION was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: D:\google drive\NC semester 6\st555\data
+184!                                                            *create orion libarary;
+185  ods pdf file='st555_hw6_result_JISHEN.pdf';
+NOTE: Writing ODS PDF output to DISK destination
+      "D:\google drive\NC semester 6\st555\Data\st555_hw6_result_JISHEN.pdf", printer "PDF".
+186
+187
+188
+189  /*Quetion 1*/
+190  /* Part a. The program will  calculate Compensation and BonusMonth correctly.*/
+191  /* Part b. The variables in the DROP statement are available for processing in the DATA step
+191! but are not written to the output data*/
+192
+193
+194
+195  /*Quetion 2*/
+196
+197  /*Part a*/
+198  data work.bonus;
+199  set orion.nonsales;
+200  if Country='US' then Bonus=500;
+201  else Bonus=300;
+202  run;
+
+NOTE: There were 235 observations read from the data set ORION.NONSALES.
+NOTE: The data set WORK.BONUS has 235 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+203  /* i observations 125, 197, and 200 have lowercase of contry names 'us'  */
+204
+205  /*ii*/
+206  proc freq data = work.bonus nlevels;
+207  table Bonus  ;   * select variable Bonus as catogory showed in the table;
+208  run;
+
+NOTE: Writing HTML Body file: sashtml1.htm
+NOTE: There were 235 observations read from the data set WORK.BONUS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.87 seconds
+      cpu time            0.65 seconds
+
+
+209
+210  /*iii There 39 people received bonus of 300.*/
+211
+212
+213  /*Part b*/
+214  /* Solution 1: Test for multplie values of country */
+215  data work.bonus;
+216  set orion.nonsales;
+217  if Country in ('US','us')
+218  then Bonus=500;
+219  else Bonus=300;
+220  run;
+
+NOTE: There were 235 observations read from the data set ORION.NONSALES.
+NOTE: The data set WORK.BONUS has 235 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+221  proc freq data = work.bonus nlevels;
+222  table Bonus  ;   * select variable Bonus as catogory showed in the table;
+223  run;
+
+NOTE: There were 235 observations read from the data set WORK.BONUS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.01 seconds
+
+
+224  /*i There are 199 people received bonus of 500.*/
+225
+226  /*Part c*/
+227  /* Solution 2: Call the upcase function in the expression */
+228  data work.bonus;
+229  set orion.nonsales;
+230  if upcase(Country)='US' then Bonus=500;
+231  else Bonus=300;
+232  run;
+
+NOTE: There were 235 observations read from the data set ORION.NONSALES.
+NOTE: The data set WORK.BONUS has 235 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+233  proc freq data = work.bonus nlevels;
+234  table Bonus  ;   * select variable Bonus as catogory showed in the table;
+235  run;
+
+NOTE: There were 235 observations read from the data set WORK.BONUS.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+
+
+236  /*i There are 199 people received bonus of 500.*/
+237
+238  /*Part d*/
+239  /* Solution 3: Clean data before subset variables */
+240  data work.bonus;
+241  set orion.nonsales;
+242  country = upcase(country); *use the upcase function to “clean” the codes under Country;
+243  if Country='US' then Bonus=500;
+244  else Bonus=300;
+245  run;
+
+NOTE: There were 235 observations read from the data set ORION.NONSALES.
+NOTE: The data set WORK.BONUS has 235 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+246
+247
+248  /*Quetion 3*/
+249
+250  * part a;
+251  data work.birthday;
+252  set orion.customer;
+253  Bday2009 = mdy(month(birth_date),day(birth_date),2009);  *i;
+254  BdayDOW2009 = weekday(Bday2009);   *ii;
+255  Age2009 = (Bday2009-birth_date)/365.25;  *iii;
+256  keep customer_name birth_date Bday2009 BdayDOW2009 Age2009;  * part b. include only listed
+256! variables;
+257  format Bday2009 date9. Age2009 3.0;  * part c;
+258  run;
+
+NOTE: There were 77 observations read from the data set ORION.CUSTOMER.
+NOTE: The data set WORK.BIRTHDAY has 77 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+259  proc print data = work.birthday;
+260  where customer_name contains 'Raedene';
+261  run;
+
+NOTE: There were 1 observations read from the data set WORK.BIRTHDAY.
+      WHERE customer_name contains 'Raedene';
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.03 seconds
+
+
+262
+263  /*part d */
+264  /*She is the 56th observation*/
+265  /*She is 17 in 2009*/
+266  /*Thursday*/
+267
+268  /*part e */
+269  /*There are 6 observations whose birthday are in June*/
+270  proc print data = work.birthday;
+271  where month(birth_date)=6; * subset the customers whose birthday are in June;
+272  run;
+
+NOTE: There were 6 observations read from the data set WORK.BIRTHDAY.
+      WHERE MONTH(birth_date)=6;
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+
+
+273
+274  /*Quetion 3*/
+275
+276  /*Part a  create temporary dataset Donations*/
+277  data work.Donations;
+278  set orion.Employee_Donations;
+279  drop Recipients Paid_By;
+280  run;
+
+NOTE: There were 124 observations read from the data set ORION.EMPLOYEE_DONATIONS.
+NOTE: The data set WORK.DONATIONS has 124 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+281  /*Part b  create temporary dataset Addresses*/
+282  data work.Addresses;
+283  set orion.Employee_Addresses;
+284  drop Employee_name Street_ID;
+285  where upcase(country)='US';  * subset cumstomers who are from US;
+286  run;
+
+NOTE: There were 316 observations read from the data set ORION.EMPLOYEE_ADDRESSES.
+      WHERE UPCASE(country)='US';
+NOTE: The data set WORK.ADDRESSES has 316 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+287  /*Part c  Sort the two temporary dataset*/
+288  proc sort data=work.Donations;
+289  by Employee_ID;
+290  run;
+
+NOTE: There were 124 observations read from the data set WORK.DONATIONS.
+NOTE: The data set WORK.DONATIONS has 124 observations and 5 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+291
+292  proc sort data=work.Addresses;
+293  by Employee_ID;
+294  run;
+
+NOTE: There were 316 observations read from the data set WORK.ADDRESSES.
+NOTE: The data set WORK.ADDRESSES has 316 observations and 7 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+295
+296  /*Part d Merge data*/
+297  /*There are 316 observations in the new dataset'Donate_Address'*/
+298  data work.Donate_Address;
+299  merge work.Donations
+300        work.Addresses;
+301  by Employee_ID;
+302  run;
+
+NOTE: There were 124 observations read from the data set WORK.DONATIONS.
+NOTE: There were 316 observations read from the data set WORK.ADDRESSES.
+NOTE: The data set WORK.DONATE_ADDRESS has 316 observations and 11 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+303
+304
+305  /*Part e*/
+306  /*i*/
+307  data work.AddOnly;
+308  merge work.Donations (in = D)
+309        work.Addresses (in = A);
+310  by Employee_ID;
+311  /*if D=0 and A=1;*/
+312  if not D and A;
+313  drop Qtr1 Qtr2 Qtr3 Qtr4;
+314  run;
+
+NOTE: There were 124 observations read from the data set WORK.DONATIONS.
+NOTE: There were 316 observations read from the data set WORK.ADDRESSES.
+NOTE: The data set WORK.ADDONLY has 192 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+315
+316  /*ii*/
+317  data work.DonOnly;
+318  merge work.Donations (in = D)
+319        work.Addresses (in = A);
+320  by Employee_ID;
+321  if D=1 and A=0;
+322  /*if D and not A;*/
+323  run;
+
+NOTE: There were 124 observations read from the data set WORK.DONATIONS.
+NOTE: There were 316 observations read from the data set WORK.ADDRESSES.
+NOTE: The data set WORK.DONONLY has 0 observations and 11 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+324
+325  /*iv*/
+326  /*There are 192 observations 7 variables in AddOnly*/
+327  /*v*/
+328  /*There are 0 observations in DonOnly*/
+329  /*vi*/
+330  /*There are 316-192=124 matches.*/
+331
+332  /*Part f*/
+333  data work.DonAdd;
+334  merge work.Donations (in = D)
+335        work.Addresses (in = A);
+336  by Employee_ID;
+337  if D=1 and A=1;
+338  /*if D and A;*/
+339  run;
+
+NOTE: There were 124 observations read from the data set WORK.DONATIONS.
+NOTE: There were 316 observations read from the data set WORK.ADDRESSES.
+NOTE: The data set WORK.DONADD has 124 observations and 11 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+340
+341
+342  /*It took me 3 hours to complete this homework.*/
+343
+344  ods pdf close;
+NOTE: ODS PDF printed 5 pages to D:\google drive\NC semester
+      6\st555\Data\st555_hw6_result_JISHEN.pdf.

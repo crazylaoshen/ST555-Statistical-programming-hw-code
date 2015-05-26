@@ -1,0 +1,82 @@
+---
+title: "ST555 Homework 12"
+author: "Ji Shen"
+date: "Thursday, April 16, 2015"
+output: html_document
+---
+
+
+```{r}
+# clean dataset
+rm(list = ls())
+```
+# Question 1
+```{r}
+library(MASS)
+data(Cars93)
+```
+# Question 2
+```{r}
+name <- names(Cars93) #get the names of variables of data
+name
+length(name)  # count the number of variables
+```
+# Question 3
+```{r}
+NumOfcar <- nrow(Cars93) # counting rows of data
+NumOfcar
+```
+# Question 4
+```{r}
+TypeOfcar <- table(Cars93$Type) # counting rows of data
+TypeOfcar
+NumSporty <- sum(Cars93$Type == 'Sporty') # counting the number of sporty cars
+NumSporty
+```
+# Question 5
+```{r}
+mpg.city <- summary(Cars93$MPG.city) # summary the variable MPG.city
+mpg.city
+```
+# Question 6
+```{r}
+boxplot(split(Cars93$MPG.city,Cars93$Type))
+#part a: Van seems to travel the least number of miles per gallon
+#part b: We could tell from the height of box of different type. The half of
+# their distribution are in the box. The lower of the box, the less number of 
+# miles the type of car could run.
+```
+# Question 7
+```{r}
+attach(Cars93)
+x <- matrix(
+  c(Price, MPG.highway, Length, Horsepower),
+  ncol=4)
+par(mfrow=c(2,2)) # all plots in one page
+opts=c("Price", "MPG.highway", "Length", "Horsepower")
+for(i in 1:length(opts)){ 
+  plot(x[,i], MPG.city, type="p", xlab=opts[i])
+}
+#part a. The horspower appears to have the strongest negative association with 
+#City miles per gallon
+#part b. Highway miles per gallon appears to have the strongest positive 
+#association with City miles per gallon
+```
+# Question 8
+```{r}
+CORR <- numeric(4) #Initalize a numerical vector
+for(i in 1:length(opts)){ 
+  CORR[i] <- cor(x[,i], MPG.city)
+}  # use loop to calculate the correlation
+names(CORR)<-opts  # give names to corresponding correlations
+which.min(CORR) # find the index of minimum of correlation
+which.max(CORR) # find the index of maximum of correlation
+```
+
+
+
+
+```{r}
+# clean dataset
+rm(list = ls())
+```

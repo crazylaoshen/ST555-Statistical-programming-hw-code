@@ -1,0 +1,120 @@
+1                                                          The SAS System                            11:09 Wednesday, March 18, 2015
+
+NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
+NOTE: All registry changes will be lost at the end of the session.
+
+WARNING: Unable to copy SASUSER registry to WORK registry. Because of this, you will not see registry customizations during this 
+         session.
+NOTE: Unable to open SASUSER.PROFILE. WORK.PROFILE will be opened instead.
+NOTE: All profile changes will be lost at the end of the session.
+NOTE: Copyright (c) 2002-2010 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.3 (TS1M2) 
+      Licensed to NORTH CAROLINA STATE UNIVERSITY-SFA-T&R, Site 70085778.
+NOTE: This session is executing on the X64_7PRO  platform.
+
+
+
+NOTE: Enhanced analytical products:
+
+SAS/STAT 12.1, SAS/ETS 12.1, SAS/OR 12.1, SAS/IML 12.1
+
+NOTE: SAS initialization used:
+      real time           0.82 seconds
+      cpu time            0.46 seconds
+      
+1          
+2          /***Your Name Ji Shen
+3          	Date 3/4/2015
+4          	ST 555
+5          	Homework number 8
+6          	Goal:
+7              To apply concepts from the chapters 4 5 6 like reading raw data and data transform
+8              ***/
+9          libname hw8 "D:\google drive\NC semester 6\st555\HW8";
+NOTE: Libref HW8 was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\google drive\NC semester 6\st555\HW8
+9        !                                                         *create hw7 libarary;
+10         libname Orion "D:\google drive\NC semester 6\st555\prog2";
+NOTE: Libref ORION was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: D:\google drive\NC semester 6\st555\prog2
+10       !                                                             *create orion libarary;
+11         %let path=D:\google drive\NC semester 6\st555\prog2;
+ERROR:  An exception has been encountered.
+Please contact technical support and provide them with the following traceback information:
+ 
+The SAS task name is [Program "D:\google drive\NC sem]
+ERROR:  Read Access Violation Program "D:\google drive\NC semester 
+       6\st555\HW8\HW8_Question1_JiShen.sas"
+Exception occurred at (05BEF6A9)
+Task Traceback
+Address   Frame     (DBGHELP API Version 4.0 rev 5)
+0000000005BEF6A9  0000000005A306E0  saspso:tkvercn1+0xE669
+0000000005C37458  0000000005A30720  saspso:tkvercn1+0x56418
+0000000005BFFA43  0000000005A30A90  saspso:tkvercn1+0x1EA03
+2                                         The SAS System            11:09 Wednesday, March 18, 2015
+
+0000000005C37458  0000000005A30AD0  saspso:tkvercn1+0x56418
+0000000005BE16F4  0000000005A30B30  saspso:tkvercn1+0x6B4
+00000000073917F3  0000000005A30B38  sasoda:tkvercn1+0x7B3
+0000000007067C58  0000000005A30B78  sasods:tkvercn1+0x186C18
+0000000006F89147  0000000005A31880  sasods:tkvercn1+0xA8107
+0000000007067C58  0000000005A318C0  sasods:tkvercn1+0x186C18
+0000000006F88DAF  0000000005A32590  sasods:tkvercn1+0xA7D6F
+0000000004F236B8  0000000005A32598  sasxbtch:tkvercn1+0x2678
+0000000004F22C2C  0000000005A326E0  sasxbtch:tkvercn1+0x1BEC
+00000000046DC78C  0000000005A326E8  sasxkern:tkvercn1+0x7B74C
+00000000035FBC44  0000000005A327D8  sashost:Main+0x2584
+00000000035FB713  0000000005A329E0  sashost:Main+0x2053
+00000000046F5B3A  0000000005A32E50  sasxkern:tkvercn1+0x94AFA
+0000000005FAC55F  0000000005A32E58  saspdpdf:tkvercn1+0x8B51F
+0000000005F9DE3C  0000000005A338D0  saspdpdf:tkvercn1+0x7CDFC
+0000000005F21538  0000000005A36A20  saspdpdf:tkvercn1+0x4F8
+0000000004B93965  0000000005A36A28  sasxug:tkvercn1+0x2925
+0000000004B9DCAF  0000000005A383B0  sasxug:tkvercn1+0xCC6F
+00000000073BC318  0000000005A38C40  sasoda:tkvercn1+0x2B2D8
+0000000007393CB0  0000000005A39410  sasoda:tkvercn1+0x2C70
+00000000073B9828  0000000005A39450  sasoda:tkvercn1+0x287E8
+0000000007398E98  0000000005A39A20  sasoda:tkvercn1+0x7E58
+00000000045E5160  0000000005A39A28  saswob:tkvercn1+0x4120
+0000000007253BCB  0000000005A39B98  sasmrk:tkvercn1+0x2B8B
+0000000005C37458  0000000005A3A020  saspso:tkvercn1+0x56418
+0000000005BF1709  0000000005A3A940  saspso:tkvercn1+0x106C9
+00000000045EC1F5  0000000005A3AD00  saswob:tkvercn1+0xB1B5
+0000000007322488  0000000005A3AD40  sasmrk:tkvercn1+0xD1448
+00000000072BB9B2  0000000005A3B9F0  sasmrk:tkvercn1+0x6A972
+0000000005C37458  0000000005A3BA30  saspso:tkvercn1+0x56418
+0000000005BE685E  0000000005A3BAF0  saspso:tkvercn1+0x581E
+0000000007067C58  0000000005A3BB30  sasods:tkvercn1+0x186C18
+0000000006F8977A  0000000005A3C800  sasods:tkvercn1+0xA873A
+00000000054EDB58  0000000005A3C808  sasodst:tkvercn1+0xCB18
+00000000054ECA4A  0000000005A3D9C0  sasodst:tkvercn1+0xBA0A
+0000000007067C58  0000000005A3DA00  sasods:tkvercn1+0x186C18
+0000000006FCD550  0000000005A3DAD0  sasods:tkvercn1+0xEC510
+0000000004B10772  0000000005A3DAD8  sasxshel:tkvercn1+0x4F732
+0000000006FCDC59  0000000005A3E620  sasods:tkvercn1+0xECC19
+00000000054E11DD  0000000005A3E6C0  sasodst:tkvercn1+0x19D
+00000000053B5A08  0000000005A3E6C8  sasxany:tkvercn1+0x49C8
+00000000053B2139  0000000005A3E7B0  sasxany:tkvercn1+0x10F9
+0000000004AC2AC3  0000000005A3E8D0  sasxshel:tkvercn1+0x1A83
+0000000004AC19E4  0000000005A3E960  sasxshel:tkvercn1+0x9A4
+0000000004AE6C91  0000000005A3EB50  sasxshel:tkvercn1+0x25C51
+0000000004B19471  0000000005A3F590  sasxshel:tkvercn1+0x58431
+0000000004B1E630  0000000005A3F690  sasxshel:tkvercn1+0x5D5F0
+0000000004B16657  0000000005A3F730  sasxshel:tkvercn1+0x55617
+0000000004F2133E  0000000005A3FCB0  sasxbtch:tkvercn1+0x2FE
+0000000003608FD7  0000000005A3FF20  sashost:Main+0xF917
+000000000360D5FD  0000000005A3FF50  sashost:Main+0x13F3D
+000000007706652D  0000000005A3FF58  kernel32:BaseThreadInitThunk+0xD
+000000007719C541  0000000005A3FF88  ntdll:RtlUserThreadStart+0x21
+3                                         The SAS System            11:09 Wednesday, March 18, 2015
+
+
+ERROR:  An exception has been encountered.
+Please contact technical support and provide them with the following traceback information:
+ 
+The SAS task name is [Program "D:\google drive\NC sem]
+ERROR:  Read Access Violation Program "D:\google drive\NC semester 
+       6\st555\HW8\HW8_Question1_JiShen.sas"
+Exception occurred at (05BEF6A9)

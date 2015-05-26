@@ -1,0 +1,236 @@
+338
+339  /***Your Name Ji Shen
+340      Date 3/25/2015
+341      ST 555
+342      Homework number 10
+343      Goal:
+344      To apply concepts from the chapters 9 10 11.
+345      ***/
+346  libname hw10 "D:\google drive\NC semester 6\st555\HW10";
+NOTE: Libref HW10 was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: D:\google drive\NC semester 6\st555\HW10
+346!                                                           *create hw10 libarary;
+347  libname Orion "D:\google drive\NC semester 6\st555\prog2";
+NOTE: Libref ORION was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: D:\google drive\NC semester 6\st555\prog2
+347!                                                             *create orion libarary;
+348  %let path=D:\google drive\NC semester 6\st555\HW10;
+349
+350  ods pdf file='st555_hw6_result_JISHEN.pdf';
+NOTE: Writing ODS PDF output to DISK destination
+      "D:\google drive\NC semester 6\st555\Data\st555_hw6_result_JISHEN.pdf", printer "PDF".
+351  options fmtsearch=(hw10 hw10.myfmts);
+352
+353  /*Quetion 1*/
+354
+355  /*Part a*/
+356  /*Create an output dataset named wgtlift that rotates the weights dataset from wide */
+357  /*to narrow/long. */
+358  data hw10.wgtlift(keep=Subj Program Strength TimePoint);
+359  set hw10.weights;
+360  array wgt{*} s1 s2 s3 s4 s5 s6 s7;
+361  array look{*} _temporary_ (85    85    86    85    87    86    87);
+ERROR: The non-variable based array look has been defined with zero elements.
+362  do i=1 to dim(wgt);
+363  TimePoint = i;
+364  Strength=wgt{i};
+365  output;
+366  end;
+367  run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set HW10.WGTLIFT may be incomplete.  When this step was stopped there were 0
+         observations and 4 variables.
+WARNING: Data set HW10.WGTLIFT was not replaced because this step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+368
+369  /*Part b*/
+370
+371  /*1.  Convert the abbreviations RI, WI, CONT, to the full as Repetition Increase, Weight */
+372  /*Increase, and Control*/
+373  /*2.  Change TimePoint= 1, 2, 3, …, 7 to read TimePoint= Day 1, Day 3, Day 5, …., Day 13*/
+374  proc format ;
+375  value $program  'RI'='Repetition Increase'
+376                  'WI'= 'Weight Increase'
+377                  'CONT' = 'Control';
+NOTE: Format $PROGRAM is already on the library.
+NOTE: Format $PROGRAM has been output.
+378  value   dayrec     1 = 'Day 1'
+379                     2 = 'Day 3'
+380                     3 = 'Day 5'
+381                     4 = 'Day 7'
+382                     5 = 'Day 9'
+383                     6 = 'Day 11'
+384                     7 = 'Day 13';
+NOTE: Format DAYREC is already on the library.
+NOTE: Format DAYREC has been output.
+385  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+386
+387
+388  proc print data=hw10.wgtlift noobs;
+NOTE: Writing HTML Body file: sashtml2.htm
+389  format Program $program.
+390         TimePoint dayrec.;
+391  run;
+
+NOTE: There were 399 observations read from the data set HW10.WGTLIFT.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.76 seconds
+      cpu time            0.60 seconds
+
+
+392
+393
+394  /*Part c */
+395  /*Use as array in a data step that rotates the wgtlift dataset back to a wide dataset*/
+396  data hw10.back2wide(drop=timepoint i strength);
+397  set hw10.wgtlift;
+398  by program subj;
+399  retain Day1 Day3 Day5 Day7 Day9 Day11 Day13;
+400  array wgt{*} Day1 Day3 Day5 Day7 Day9 Day11 Day13 ;
+401  if first.subj then do;
+402  do i=1 to dim(wgt);
+403  wgt(i)=.;
+404  end;
+405  end;
+406  wgt(TimePoint)=strength;
+407  if last.subj then output;
+408
+409  run;
+
+NOTE: There were 399 observations read from the data set HW10.WGTLIFT.
+NOTE: The data set HW10.BACK2WIDE has 57 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+
+
+410
+411
+412  /*Part d*/
+413  /*create permanent formats*/
+414  proc format lib = hw10.myfmts;
+415  value $profmt  'RI'='Repetition Increase'
+416                  'WI'= 'Weight Increase'
+417                  'CONT' = 'Control';
+NOTE: Format $PROFMT is already on the library.
+NOTE: Format $PROFMT has been written to HW10.MYFMTS.
+418  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+419  data hw10.back2wide;
+420  set hw10.back2wide;
+421  format program $profmt.;
+422  run;
+
+NOTE: There were 57 observations read from the data set HW10.BACK2WIDE.
+NOTE: The data set HW10.BACK2WIDE has 57 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+423
+424
+425  /*Part e*/
+426  /*Provide a report that gives the n, mean, std, min, median, and max for the strengths at each
+426!  time point for each weightlifting program.*/
+427  proc sort data=hw10.wgtlift out=hw10.wgtsorted;
+428  by program timepoint ;
+429  run;
+
+NOTE: There were 399 observations read from the data set HW10.WGTLIFT.
+NOTE: The data set HW10.WGTSORTED has 399 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+
+
+430
+431  proc means data=hw10.wgtsorted n mean std min median max;
+432  var strength;
+433  by program timepoint;
+434  run;
+
+NOTE: There were 399 observations read from the data set HW10.WGTSORTED.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.06 seconds
+
+
+435
+436
+437  /*Question 2*/
+438
+439
+440  proc sql;
+441     create table hw10.st (id num, STscore num);
+NOTE: Table HW10.ST created, with 0 rows and 2 columns.
+442     insert into hw10.st
+443     values(1,.76) values(7,.65) values(2,.88) values(3,.98) values(9,.74) values(4,.89);
+NOTE: 6 rows were inserted into HW10.ST.
+
+444
+445
+446
+447     create table hw10.ma (id num, MAscore num);
+NOTE: Table HW10.MA created, with 0 rows and 2 columns.
+448     insert into hw10.ma
+449     values(10,1.00) values(1,.89) values(7,.43) values(3,.76) values(9,.54) values(8,.99);
+NOTE: 6 rows were inserted into HW10.MA.
+
+450
+451
+452     create table hw10.hs (id num, HSscore num);
+NOTE: Table HW10.HS created, with 0 rows and 2 columns.
+453     insert into hw10.hs
+454     values(10,1.00) values(7,.81) values(2,.87) values(5,.92) values(6,.85) values(9,.67)
+454! values(8,.93) values(4,.65) ;
+NOTE: 8 rows were inserted into HW10.HS.
+
+455
+456  /*Part a.  common to the Statistics and Mathematics courses.  Include their scores (course
+456! average) in both classes in a side-by-side fashion. */
+457  select s.id,  STscore format=percent8., MAscore format=percent8.
+458  from hw10.st s, hw10.ma m
+459  where s.id = m.id;
+460
+461  /*Part b.  common to the Statistics and History courses.  Include their scores in both classes
+461!  in a side-by-side fashion. */
+462  select s.id,  STscore format=percent8., HSscore format=percent8.
+463  from hw10.st s, hw10.hs h
+464  where s.id = h.id;
+465  /*c.   common to the Mathematics and History courses.  Include their scores in both classes in
+465!  a side-by-side fashion.  */
+466  select m.id,  MAscore format=percent8., HSscore format=percent8.
+467  from hw10.ma m, hw10.hs h
+468  where m.id = h.id;
+469  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.26 seconds
+      cpu time            0.14 seconds
+
+
+470
+471
+472
+473
+474  ods pdf close;
+NOTE: ODS PDF printed 19 pages to D:\google drive\NC semester
+      6\st555\Data\st555_hw6_result_JISHEN.pdf.

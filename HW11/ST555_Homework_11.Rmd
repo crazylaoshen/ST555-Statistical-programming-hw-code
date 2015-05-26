@@ -1,0 +1,51 @@
+---
+title: "ST555 Homework 11"
+author: "Ji Shen"
+date: "Thursday, April 09, 2015"
+output: html_document
+---
+
+
+```{r}
+# clean dataset
+rm(list = ls())
+```
+
+
+# Question 1
+```{r}
+# part 1
+int <- c(1:50)# Create a vector ¡°ints¡± that contains the integers from 1 to 50.
+int
+# part 2
+powertwo <- 2^int 
+#Create a vector ¡°powertwo¡± that raises the integers 1 to 50 to the power of 2
+powertwo
+```
+
+
+# Question 2
+```{r}
+
+squared50 <- int^2
+# Create a vector called ¡°squared50¡± that captures n2 for the first 50 integers
+squared50
+
+```
+
+# Question 3
+```{r}
+equal <- powertwo == squared50 
+#Create a vector ¡°equal¡± that holds the logical operators integers
+equal
+numEqual <- sum(equal == 1) # There are 2 pairs
+numEqual
+powertwo[equal] # print out the pairs  which satisfy equality
+
+```
+
+
+```{r}
+# clean dataset
+rm(list = ls())
+```

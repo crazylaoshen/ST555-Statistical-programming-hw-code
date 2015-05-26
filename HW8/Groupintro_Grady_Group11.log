@@ -1,0 +1,126 @@
+1                                                          The SAS System                              19:26 Thursday, April 9, 2015
+
+NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
+NOTE: All registry changes will be lost at the end of the session.
+
+WARNING: Unable to copy SASUSER registry to WORK registry. Because of this, you will not see registry customizations during this 
+         session.
+NOTE: Unable to open SASUSER.PROFILE. WORK.PROFILE will be opened instead.
+NOTE: All profile changes will be lost at the end of the session.
+NOTE: Copyright (c) 2002-2010 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.3 (TS1M2) 
+      Licensed to NORTH CAROLINA STATE UNIVERSITY-SFA-T&R, Site 70085778.
+NOTE: This session is executing on the X64_7PRO  platform.
+
+
+
+NOTE: Enhanced analytical products:
+
+SAS/STAT 12.1, SAS/ETS 12.1, SAS/OR 12.1, SAS/IML 12.1
+
+NOTE: SAS initialization used:
+      real time           0.90 seconds
+      cpu time            0.54 seconds
+      
+1          /***Marshall Grady
+2          	3/4/2015
+3          	ST 555
+4          	Homework 7 Question 3
+5           ***/
+6          
+7          /*3) Go to this week’s group discussion forum, obtain your group members’ SAS datasets
+8          “GroupIntro_YourLastName” and yours too. Merge the 3 – 4 datasets together (3 if you
+9          have total group members, 4 if you have 4 total group members including yourself)
+10         
+11         a. Call the permanent merged dataset
+12         “GroupIntro_YourLastName_YourGroupNumber” so Dr. Moore’s dataset could
+13         be called GroupIntro_Moore_Group13.sas7bdat
+14         */
+15         libname orion "C:\Users\Marshall\Documents\ecprg193";
+NOTE: Library ORION does not exist.
+16         run;
+17         
+18         data Orion.GroupIntroMA;
+19         	input Name $ From $  Degree $  Age   Gains $  StClasses  PRGLanguages  Experience $
+19       ! WeLove $;
+20         	datalines;
+
+ERROR: Library ORION does not exist.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: SAS set option OBS=0 and will continue to check statements. 
+      This might cause NOTE: No observations in data set.
+NOTE: DATA statement used (Total process time):
+      real time           0.46 seconds
+      cpu time            0.01 seconds
+      
+2                                         The SAS System              19:26 Thursday, April 9, 2015
+
+24         ;
+
+
+25         run;
+26         
+27         data orion.GroupintroOl;
+28         input From & $20. Discipline & $15. Age StatCourses GroupTrait & $30. Gender$ Languages
+28       ! Experience & $8. Interest1 & $30. Interest2 & $65.;
+29         datalines;
+
+ERROR: Library ORION does not exist.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+33         ;
+34         run;
+35         
+36         data Orion.GroupIntroSH;
+37             infile datalines delimiter=','; *Using infile with delimiter option to change
+37       ! delimiter as comma;
+38         	input name:$15. HomeTown:$10.  Disciplineage:$30.  Age Gender:$1.  Hope:$150.
+38       ! NoOfStClass  NoOfLanguage  ExpSas:$10.  GroupTrait:$20.;
+39         	datalines;
+
+ERROR: Library ORION does not exist.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+44         ;
+45         run;
+46         
+47         data GroupIntro_Grady_11;
+48         	merge Orion.GroupIntroMA
+49         		  Orion.GroupIntroOl	
+50         		  Orion.GroupIntroSH;
+ERROR: Library ORION does not exist.
+ERROR: Library ORION does not exist.
+ERROR: Library ORION does not exist.
+51         run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.GROUPINTRO_GRADY_11 may be incomplete.  When this step was stopped 
+         there were 0 observations and 0 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+      
+
+52         proc print data=GroupIntro_Grady_11;
+3                                         The SAS System              19:26 Thursday, April 9, 2015
+
+53         run;
+
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.33 seconds
+      cpu time            0.04 seconds
+      
+
+ERROR: Errors printed on pages 1,2.
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           2.03 seconds
+      cpu time            0.65 seconds
+      

@@ -1,0 +1,254 @@
+350
+351  /***Your Name Ji Shen
+352      Date 1/27/2015
+353      ST 555
+354      Homework number 7
+355      Goal:
+356      To apply concepts from the chapters 7
+357      ***/
+358  libname hw7 "D:\google drive\NC semester 6\st555\HW7";
+NOTE: Libref HW7 was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: D:\google drive\NC semester 6\st555\HW7
+358!                                                         *create hw7 libarary;
+359  libname Orion "D:\google drive\NC semester 6\st555\prog2";
+NOTE: Libref ORION was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: D:\google drive\NC semester 6\st555\prog2
+359!                                                             *create orion libarary;
+360  ods pdf file='st555_hw6_result_JISHEN.pdf';
+NOTE: Writing ODS PDF output to DISK destination
+      "D:\google drive\NC semester 6\st555\Data\st555_hw6_result_JISHEN.pdf", printer "PDF".
+361
+362
+363
+364  /*Quetion 1*/
+365  /* Part g. The cre8data.sas created 56 datasets.*/
+366
+367
+368  /*Quetion 2*/
+369
+370  /*Part a*/
+371  /* create a report with the variable names of each dataset*/
+372  proc contents data = hw7._all_ ;
+NOTE: Writing HTML Body file: sashtml3.htm
+373  run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.80 seconds
+      cpu time            0.67 seconds
+
+
+374
+375  /*Part b*/
+376  /*Only include observations with Start Point values of 'BHM' and flights scheduled for
+376! Christmas Day. */
+377  proc sort data=hw7.Sales121999 out=work.Sales(drop=BClassRev);
+378  by flightid;
+379  where origin = 'BHM' and date = '25Dec1999'd;
+380  run;
+
+NOTE: Input data set is already sorted; it has been copied to the output data set.
+NOTE: There were 6 observations read from the data set HW7.SALES121999.
+      WHERE (origin='BHM') and (date='25DEC1999'D);
+NOTE: The data set WORK.SALES has 6 observations and 8 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+381
+382  proc sort data=hw7.target121999 out=work.target(drop=BClassTarRev);
+383  by flightid;
+384  where origin = 'BHM' and date = '25Dec1999'd;
+385  run;
+
+NOTE: Input data set is already sorted; it has been copied to the output data set.
+NOTE: There were 6 observations read from the data set HW7.TARGET121999.
+      WHERE (origin='BHM') and (date='25DEC1999'D);
+NOTE: The data set WORK.TARGET has 6 observations and 8 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+386
+387  /*Part c*/
+388  /*sort the 2 original datasets for merge*/
+389  proc sort data=hw7.Sales121999 ;
+390  by flightid;
+391  run;
+
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+
+
+392
+393  proc sort data=hw7.target121999;
+394  by flightid;
+395  run;
+
+NOTE: Input data set is already sorted, no sorting done.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+
+
+396
+397
+398  data hw7.BHM  hw7.NonBHM;
+399  merge hw7.Sales121999
+400        hw7.target121999; * i. merge the data;
+401  by flightid;
+402  select (origin);
+403        when ('BHM')  do;
+404           TotalTar=sum(BClassTarRev,CargoTarRev,EClassTarRev,FClassTarRev); * iv Create a new
+404! variable called 'Totaltar';
+405           TotalSal=sum(BClassRev,CargoRev,EClassRev,FClassRev); * v Create a new variable
+405! called 'TotalSal';
+406           if totaltar>totalsal then Goal='Not Met'; else Goal='Met'; * vi Create a new variable
+406!  called 'Goal';
+407           output hw7.BHM;
+408        end;
+409        otherwise  do;
+410           TotalTar=sum(BClassTarRev,CargoTarRev,EClassTarRev,FClassTarRev); * iv Create a new
+410! variable called 'Totaltar';
+411           TotalSal=sum(BClassRev,CargoRev,EClassRev,FClassRev); * v Create a new variable
+411! called 'TotalSal';
+412           if totaltar>totalsal then Goal='Not Met'; else Goal='Met'; * vi Create a new variable
+412!  called 'Goal';
+413           output hw7.NonBHM;
+414        end;
+415  end;
+416  run;
+
+NOTE: MERGE statement has more than one data set with repeats of BY values.
+NOTE: There were 1638 observations read from the data set HW7.SALES121999.
+NOTE: There were 1692 observations read from the data set HW7.TARGET121999.
+NOTE: The data set HW7.BHM has 186 observations and 16 variables.
+NOTE: The data set HW7.NONBHM has 1506 observations and 16 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.04 seconds
+
+
+417  /*ii. 20 minutes to complete this question*/
+418  /*iii. 30 minutes to complete this question */
+419
+420  /*Part d*/
+421  data hw7.bhm_final;
+422  set hw7.bhm;
+423  if flightid ^= 'IA02401'
+424  and goal='Met' then output;
+425  keep flightid FClassRev BClassRev EClassRev CargoRev totalsal;
+426  run;
+
+NOTE: There were 186 observations read from the data set HW7.BHM.
+NOTE: The data set HW7.BHM_FINAL has 75 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.03 seconds
+
+
+427
+428  /*Part e*/
+429  proc print data=hw7.bhm noobs label ;
+430  label totalsal='Total Revenue';
+431  format totalsal dollar10.2 ;
+432  run;
+
+NOTE: There were 186 observations read from the data set HW7.BHM.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.90 seconds
+      cpu time            0.51 seconds
+
+
+433
+434  /*Part f  It took me 1.5 hour to finish this assignment*/
+435
+436
+437  /*Quetion 3*/
+438  /*This is my dataset*/
+439   data hw7.GroupIntroShen;
+440      infile datalines delimiter=','; *Using infile with delimiter option to change delimiter as
+440!  comma;
+441      input name:$15. HomeTown:$20.  Discipline:$30.  Age Gender:$1.  Hope:$150.  NoOfStClass
+441! NoOfLanguage  ExpSas:$10.  GroupTrait:$20.;
+442      datalines;
+
+NOTE: The data set HW7.GROUPINTROSHEN has 4 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+
+
+447  ;
+448  run;
+449
+450  /*This is my teammate's dataset*/
+451  data hw7.groupintroOlasimbo; /*bringing the info from the group discussions using informats
+451! and datalines*/
+452  input From & $20. Discipline & $15. Age StatCourses GroupTrait & $30. Gender$ Languages
+452! Experience & $8. Interest1 & $30. Interest2 & $65.;
+453  datalines;
+
+NOTE: The data set HW7.GROUPINTROOLASIMBO has 3 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+457  ;
+458  run;
+459  /*This is my teammate's dataset*/
+460  data hw7.GroupIntroGrady;
+461      input Name $ From $  Degree $  Age  Gains $  StClasses  PRGLanguages  Experience $  WeLove
+461!  $;
+462      datalines;
+
+NOTE: The data set HW7.GROUPINTROGRADY has 3 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+466  ;
+467  run;
+468  /*Merge the the 3 dataset together*/
+469  data hw7.GroupIntro_Shen;
+470
+471  set hw7.groupintroShen
+472      hw7.groupintroolasimbo(rename=(from=HomeTown StatCourses=NoOfStClass
+472! languages=NoOfLanguage Experience=ExpSas))
+473      hw7.groupintrogrady(rename=(from=HomeTown StClasses=NoOfStClass  gains=hope
+473! PRGlanguages=NoOfLanguage Experience=ExpSas Degree=Discipline Welove=grouptrait));
+474
+475  run;
+
+WARNING: Multiple lengths were specified for the variable Gender by input data set(s). This may
+         cause truncation of data.
+WARNING: Multiple lengths were specified for the variable GroupTrait by input data set(s). This
+         may cause truncation of data.
+NOTE: There were 4 observations read from the data set HW7.GROUPINTROSHEN.
+NOTE: There were 3 observations read from the data set HW7.GROUPINTROOLASIMBO.
+NOTE: There were 3 observations read from the data set HW7.GROUPINTROGRADY.
+NOTE: The data set HW7.GROUPINTRO_SHEN has 10 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+476
+477  /*There are 12 variables in my merged GroupIntro dataset*/
+478  /*It took me 40 minutes to complete this question*/
+479
+480  /*Quetion 4*/
+481  /*a. Paul is helpful in the disscusion in the forum.*/
+482  /*b. I can't think of any this time.*/
+483
+484
+485  ods pdf close;
+NOTE: ODS PDF printed 29 pages to D:\google drive\NC semester
+      6\st555\Data\st555_hw6_result_JISHEN.pdf.

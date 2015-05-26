@@ -1,0 +1,227 @@
+550
+551  /***Your Name Ji Shen
+552      Date 3/4/2015
+553      ST 555
+554      Homework number 8
+555      Goal:
+556      To apply concepts from the chapters 4 5 6 like reading raw data and data transform
+557      ***/
+558  libname hw8 "D:\google drive\NC semester 6\st555\HW8";
+NOTE: Libref HW8 was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: D:\google drive\NC semester 6\st555\HW8
+558!                                                         *create hw7 libarary;
+559  libname Orion "D:\google drive\NC semester 6\st555\prog2";
+NOTE: Libref ORION was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: D:\google drive\NC semester 6\st555\prog2
+559!                                                             *create orion libarary;
+560  %let path=D:\google drive\NC semester 6\st555\prog2;
+561
+562  ods pdf file='st555_hw6_result_JISHEN.pdf';
+NOTE: Writing ODS PDF output to DISK destination
+      "D:\google drive\NC semester 6\st555\Data\st555_hw6_result_JISHEN.pdf", printer "PDF".
+563
+564  /*Quetion 1*/
+565  /* Part g. The cre8data.sas created 56 datasets.*/
+566
+567
+568  /*a) Create a new SAS data sets called 'Sales' that contain the fields indicated by ** in
+568! the*/
+569  /*tables above. Format the Salary variable so that is displays the $ and comma, but no*/
+570  /*decimals, and format the Hire Date so that it dispays like 01APR2014.*/
+571
+572  /*i. From the log, how many records were read from Sales3.dat? _330__*/
+573  /*ii. How many observations are in Sales? __165__*/
+574
+575  data hw8.sales;
+576     infile "&path\sales3.dat";
+577     input  @1 Employee_ID 6.
+578           @8 First_Name $12.
+579           @21 Last_Name $18.
+580           @43 Job_Title $20.;
+581     input @24 Hire_Date ddmmyy10.
+582           @10 Country $2.@;
+583
+584      if Country = 'AU' then do;
+585        input @1 Salary dollarx8.;
+586        end;
+587      else if Country = 'US' then do;
+588        input @1 Salary dollar8.;
+589        end;
+590      format salary dollar8.  Hire_Date date9.;
+591      run;
+
+NOTE: The infile "D:\google drive\NC semester 6\st555\prog2\sales3.dat" is:
+      Filename=D:\google drive\NC semester 6\st555\prog2\sales3.dat,
+      RECFM=V,LRECL=256,File Size (bytes)=27060,
+      Last Modified=24Feb2015:21:19:07,
+      Create Time=24Feb2015:21:19:07
+
+NOTE: 330 records were read from the infile "D:\google drive\NC semester 6\st555\prog2\sales3.dat".
+      The minimum record length was 80.
+      The maximum record length was 80.
+NOTE: The data set HW8.SALES has 165 observations and 7 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.03 seconds
+
+
+592
+593
+594  /*  b) Create two new datasets called 'AUJobTotals' and 'USJobTotals' with the following:*/
+595
+596  /*iv. Format the total salary to display the $ and commas.*/
+597
+598  proc sort data= hw8.sales;
+599      by country job_title;
+600  run;
+
+NOTE: There were 165 observations read from the data set HW8.SALES.
+NOTE: The data set HW8.SALES has 165 observations and 7 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+601
+602
+603  data hw8.USJobTotals (keep=job_title total_salary total_number country)
+604       hw8.AUJobTotals (keep=job_title total_salary total_number country);
+605  /*ii. Only keep the job title, the total salary, and the total number of employees in each
+605! dataset.*/
+606    set hw8.sales;
+607    by Country Job_Title;
+608    /*i. Calculate the total salary and number of employees of each job title in each*/
+609  /*country.*/
+610      if first.job_title=1 then do;
+611      Total_Salary=0;
+612      Total_Number=0;
+613    end;
+614    Total_salary+Salary;
+615    Total_Number+1;
+616    if last.job_Title=1;
+617    label job_title='Job Title' Total_Number='Number of Employees'; *iii. Add the labels;
+618    format Total_Salary dollar10.; /*iv. Format the total salary to display the $ and commas.*/
+619    if country='US' then output hw8.USJobTotals;  *ii. Output the US totals to 'USJobTotals';
+620    else if country='AU' then output hw8.AUJobTotals;  *ii.output the Australian totals to
+620! 'AUJobTotals'.;
+621  run;
+
+NOTE: There were 165 observations read from the data set HW8.SALES.
+NOTE: The data set HW8.USJOBTOTALS has 7 observations and 4 variables.
+NOTE: The data set HW8.AUJOBTOTALS has 5 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+622
+623
+624  /*c) Print the two datasets in (b).*/
+625  proc print data = hw8.USJobTotals label;
+NOTE: Writing HTML Body file: sashtml6.htm
+626  run;
+
+NOTE: There were 7 observations read from the data set HW8.USJOBTOTALS.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.57 seconds
+      cpu time            0.48 seconds
+
+
+627  proc print data = hw8.AUJobTotals label;
+628  run;
+
+NOTE: There were 5 observations read from the data set HW8.AUJOBTOTALS.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.01 seconds
+
+
+629  /*i. What is the total salary paid to US Sales Rep. I's?__$1,113,650_____*/
+630  /*ii. How many Australian Sales Managers are there?___$196,230____*/
+631
+632
+633
+634  /*d) create a new dataset called “Reps4” that only contains*/
+635  /*employees whose Job Title is “Sales Rep. IV” with the following variables:*/
+636
+637
+638
+639  /*Add First_name and Birth_date into dataset sales2 from raw data*/
+640  data hw8.sales2;
+641     infile "&path\sales3.dat";
+642     input  @1 Employee_ID 6.
+643           @8 First_Name $12.
+644           @21 Last_Name $18.
+645           @43 Job_Title $20.;
+646     input
+647           @24 Hire_Date ddmmyy10.
+648           @10 Country $2.@;
+649
+650      if Country = 'AU' then do;
+651        input @1 Salary dollarx8.
+652              @13 Birth_Date ddmmyy10.;
+653        end;
+654      else if Country = 'US' then do;
+655        input @1 Salary dollar8.
+656               @13 Birth_Date mmddyy10.;
+657        end;
+658      format salary dollar8.  Hire_Date date9.;
+659      run;
+
+NOTE: The infile "D:\google drive\NC semester 6\st555\prog2\sales3.dat" is:
+      Filename=D:\google drive\NC semester 6\st555\prog2\sales3.dat,
+      RECFM=V,LRECL=256,File Size (bytes)=27060,
+      Last Modified=24Feb2015:21:19:07,
+      Create Time=24Feb2015:21:19:07
+
+NOTE: 330 records were read from the infile "D:\google drive\NC semester 6\st555\prog2\sales3.dat".
+      The minimum record length was 80.
+      The maximum record length was 80.
+NOTE: The data set HW8.SALES2 has 165 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+
+
+660
+661
+662  data hw8.Reps4(drop=Hire_Day);
+663  set hw8.sales2(rename=(Hire_Date=Hire_Day));
+664  if job_title ='Sales Rep. IV';
+665  Full_name= cat(' ',First_Name,Last_Name); *i. Create a variable full name that combines each
+665! employee’s First Name and last name;
+666  Age = round(('19oct2014'd-Birth_Date)/365); *ii. Create a variable age that gives the Age of
+666! each employee as of October 19, 2014;
+667  Hire_Date = put(Hire_day, date9.);  /*iii. Convert Hire Date to a character variable. */
+668  run;
+
+NOTE: There were 165 observations read from the data set HW8.SALES2.
+NOTE: The data set HW8.REPS4 has 16 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+
+
+669
+670  /*e) Provide a proc contents for Reps4 dataset created in d)*/
+671  proc contents data=hw8.Reps4;
+672  run;
+
+NOTE: PROCEDURE CONTENTS used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.04 seconds
+
+
+673  /*i. How many employees are in the Reps4 dataset? ___16_____*/
+674
+675
+676
+677
+678
+679
+680
+681  ods pdf close;
+NOTE: ODS PDF printed 4 pages to D:\google drive\NC semester
+      6\st555\Data\st555_hw6_result_JISHEN.pdf.

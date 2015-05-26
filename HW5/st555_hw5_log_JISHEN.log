@@ -1,0 +1,270 @@
+ERROR: The Java proxy is not responding.
+ERROR: The Java proxy's JNI call to start the VM failed.
+ERROR: Java failed to start during the SAS startup.
+NOTE: Copyright (c) 2002-2010 by SAS Institute Inc., Cary, NC, USA.
+NOTE: SAS (r) Proprietary Software 9.3 (TS1M2)
+      Licensed to NORTH CAROLINA STATE UNIVERSITY-SFA-T&R, Site 70085778.
+NOTE: This session is executing on the X64_7PRO  platform.
+
+
+
+NOTE: Enhanced analytical products:
+
+SAS/STAT 12.1, SAS/ETS 12.1, SAS/OR 12.1, SAS/IML 12.1
+
+NOTE: SAS initialization used:
+      real time           1.43 seconds
+      cpu time            1.20 seconds
+
+1
+2
+3    /***Your Name Ji Shen
+4        Date 1/27/2015
+5        ST 555
+6        Homework number 5
+7        Goal:
+8        To apply concepts from the chapters such as read non standard data and manipulate data
+9        ***/
+10   libname hw5 "D:\google drive\NC semester 6\st555\HW5";
+NOTE: Libref HW5 was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: D:\google drive\NC semester 6\st555\HW5
+10 !                                                         *create hw5 libarary;
+11   libname Orion "D:\google drive\NC semester 6\st555\HW5";
+NOTE: Libname ORION refers to the same physical library as HW5.
+NOTE: Libref ORION was successfully assigned as follows:
+      Engine:        V9
+      Physical Name: D:\google drive\NC semester 6\st555\HW5
+11 !                                                           *create orion libarary;
+12
+13   ods pdf file='st555_hw4_result_JISHEN.pdf';
+NOTE: Writing ODS PDF output to DISK destination
+      "D:\google drive\NC semester 6\st555\Data\st555_hw4_result_JISHEN.pdf", printer "PDF".
+14   /* Question 1 */
+15
+16   /* part a */
+17   /*Use DATA step to read supplier.csv into SAS*/
+18   data hw5.supplier;
+19   infile "D:\google drive\NC semester 6\st555\HW5\supplier.csv" dlm=',' firstobs=2;
+20   input Supplier_ID  Supplier_Name :$28.  Street_ID  Supplier_Address :$24. Street_Number
+20 ! Country :$2.;
+21   * use informat to read nonstandard data;
+22   run;
+
+NOTE: The infile "D:\google drive\NC semester 6\st555\HW5\supplier.csv" is:
+      Filename=D:\google drive\NC semester 6\st555\HW5\supplier.csv,
+      RECFM=V,LRECL=256,File Size (bytes)=3159,
+      Last Modified=03Feb2015:21:18:29,
+      Create Time=03Feb2015:21:18:29
+
+NOTE: 52 records were read from the infile "D:\google drive\NC semester 6\st555\HW5\supplier.csv".
+      The minimum record length was 43.
+      The maximum record length was 69.
+NOTE: The data set HW5.SUPPLIER has 52 observations and 6 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+
+
+23
+24
+25   /* part b */
+26   /*The length for Supplier Name is 28;*/
+27   /*The length for Address is 24;*/
+28   /*The length for Country is 2;*/
+29
+30   /* part c*/
+31   data hw5.supplier2;
+32   * ii Use length statement ensure that the values of 'DiscountType' and 'Region' are not
+32 ! truncated.;
+33   set hw5.supplier;
+34   length DiscountType $ 8   Region $ 17;
+35   * Create 3 new variables under conditions;
+36   if Country in('US', 'CA') then do;
+37   Discount=0.10 ;
+38   DiscountType ='Required';
+39   Region= 'North America';
+40   end;
+41   else do;
+42   Discount=0.05;
+43   DiscountType ='Optional';
+44   Region= 'Not North America';
+45   end;
+46   * Only keep the supplier name, country, and the 3 variables created in part b;
+47   keep supplier_name country Discount DiscountType  Region;
+48   run;
+
+NOTE: There were 52 observations read from the data set HW5.SUPPLIER.
+NOTE: The data set HW5.SUPPLIER2 has 52 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+49
+50
+51   /* part d */
+52   * There are 24 obs in North america, 28 are not in North America;
+53   proc freq data = hw5.supplier2 nlevels;
+54   table region / nocum ;   * select variable region as catogory showed in the table;
+55   run;
+
+NOTE: Writing HTML Body file: sashtml.htm
+NOTE: There were 52 observations read from the data set HW5.SUPPLIER2.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           1.15 seconds
+      cpu time            1.01 seconds
+
+
+56
+57
+58
+59   /* Question 2 */
+60
+61   * part a write a DATA step to read in prices.dat.;
+62   data hw5.prices;
+63   infile "D:\google drive\NC semester 6\st555\HW5\prices.dat" dlm='*' missover ; * use missover
+63 ! to leave place for missing data in the end;
+64   input ProductID  StartDate:date. EndDate:date. UnitCostPrice:dollar. UnitSalesPrice:dollar.; *
+64 !  informatw.to read nonstandard data, w typically not used;
+65   * part b create labels;
+66   label  ProductID ='Product ID'    StartDate='Start of Date' EndDate='End of Date'
+67          UnitCostPrice='Cost PPU'   UnitSalesPrice='Sales PPU';
+68   * part c & d set format;
+69   format StartDate enddate ddmmyy10. unitcostprice  unitsalesprice dollar5.2 ;
+70   run;
+
+NOTE: The infile "D:\google drive\NC semester 6\st555\HW5\prices.dat" is:
+      Filename=D:\google drive\NC semester 6\st555\HW5\prices.dat,
+      RECFM=V,LRECL=256,File Size (bytes)=21238,
+      Last Modified=03Feb2015:21:18:33,
+      Create Time=03Feb2015:21:18:33
+
+NOTE: 259 records were read from the infile "D:\google drive\NC semester 6\st555\HW5\prices.dat".
+      The minimum record length was 80.
+      The maximum record length was 80.
+NOTE: The data set HW5.PRICES has 259 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+
+
+71
+72   * part e print the dataset with labels ;
+73   proc print data=hw5.prices  label;
+74   run;
+
+NOTE: There were 259 observations read from the data set HW5.PRICES.
+NOTE: At least one W.D format was too small for the number to be printed. The decimal may be
+      shifted by the "BEST" format.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.23 seconds
+      cpu time            0.17 seconds
+
+
+75
+76   * part f  The 25th observation doesn't contain any missing values;
+77
+78
+79   /* Question 3*/
+80   * read in manager.dat and display the result;
+81   data hw5.salesmgmt;
+82   infile "D:\google drive\NC semester 6\st555\HW5\managers.dat" dlm='/' dsd missover; * use dsd
+82 ! recognize missing data between delimiters;
+83   * informatw.to read nonstandard data, w typically not used, colon modifier will make sas read
+83 ! until next delimiter;
+84   input ID  First$ Last:$11.  Gender$ Salary  Title:$20. Country$   Birthdate:date.
+84 ! HireDate:ddmmyy.;
+85   run;
+
+NOTE: The infile "D:\google drive\NC semester 6\st555\HW5\managers.dat" is:
+      Filename=D:\google drive\NC semester 6\st555\HW5\managers.dat,
+      RECFM=V,LRECL=256,File Size (bytes)=492,
+      Last Modified=04Feb2015:03:13:31,
+      Create Time=04Feb2015:03:13:27
+
+NOTE: 6 records were read from the infile "D:\google drive\NC semester 6\st555\HW5\managers.dat".
+      The minimum record length was 80.
+      The maximum record length was 80.
+NOTE: The data set HW5.SALESMGMT has 6 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+
+
+86
+87
+88   proc print data=hw5.salesmgmt ;
+89   var ID Last Title  HireDate  Salary; * keep only 5 variables;
+90   format Last $11. Title $20. HireDate Date9.; * set the format which is required ;
+91   run;
+
+NOTE: There were 6 observations read from the data set HW5.SALESMGMT.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.00 seconds
+
+
+92
+93
+94
+95
+96   * part c recreate the report with dollar sign and commas;
+97
+98   proc print data=hw5.salesmgmt ;
+99   var ID Last Title  HireDate  Salary; * keep only 5 variables;
+100  format Last $11. Title $20. HireDate Date9. Salary dollar8.; * set the format which is
+100! required ;
+101  run;
+
+NOTE: There were 6 observations read from the data set HW5.SALESMGMT.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+
+
+102
+103
+104
+105  /* Question 4*/
+106  *SAS/Access guarantees accessing the most recent data in the workbook or database;
+107  *Proc import is easier for programming, it doesn't need the name literal;
+108  *Proc import makes a copy of data unless use specific option replace;
+109
+110
+111  /* Question 5*/
+112  * Creat my goup data;
+113   data Orion.GroupIntro2;
+114      infile datalines delimiter=','; *Using infile with delimiter option to change delimiter as
+114!  comma;
+115      input name:$15. HomeTown:$10.  Disciplineage:$30.  Age Gender:$1.  Hope:$150.  NoOfStClass
+115!   NoOfLanguage  ExpSas:$10.  GroupTrait:$20.;
+116      datalines;
+
+NOTE: The data set ORION.GROUPINTRO2 has 4 observations and 10 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+
+
+121  ;
+122  run;
+123
+124  * part d  print the dataset;
+125  proc print data=Orion.GroupIntro2;
+126  run;
+
+NOTE: There were 4 observations read from the data set ORION.GROUPINTRO2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.01 seconds
+
+
+127
+128
+129  /* Question 6*/
+130  /*I spend 3.5 hours to finish this homework.*/
+131
+132  ods pdf close;
+NOTE: ODS PDF printed 12 pages to D:\google drive\NC semester
+      6\st555\Data\st555_hw4_result_JISHEN.pdf.
